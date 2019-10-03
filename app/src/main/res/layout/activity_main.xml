@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="800px"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/namelabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="150px"
+                android:text="To Do List"
+                android:textSize="100px" />
+
+            <EditText
+                android:id="@+id/idspace"
+                android:layout_width="620px"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="100px"
+                android:hint="ID" />
+
+            <EditText
+                android:id="@+id/pwspace"
+                android:layout_width="620px"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="PW" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/login"
+                android:layout_width="300px"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50px"
+                android:background="@android:color/background_light"
+                android:text="Login" />
+
+            <Button
+                android:id="@+id/apply"
+                android:layout_width="300px"
+                android:layout_height="wrap_content"
+                android:background="@android:color/background_light"
+                android:text="Apply" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
