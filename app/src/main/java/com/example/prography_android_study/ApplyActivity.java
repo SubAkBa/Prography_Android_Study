@@ -2,12 +2,14 @@ package com.example.prography_android_study;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
+
+import java.io.Console;
+import java.util.*;
 
 public class ApplyActivity extends AppCompatActivity {
     Button checkidbtn, completebtn, cancelbtn;
@@ -18,10 +20,14 @@ public class ApplyActivity extends AppCompatActivity {
     UserDB db;
     UserDAO userdao;
 
+    ArrayList<User> user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apply);
+
+        user = new ArrayList<>();
 
         db = UserDB.getDatabase(getApplicationContext());
         userdao = db.userDao();
@@ -77,12 +83,20 @@ public class ApplyActivity extends AppCompatActivity {
                     }
                 });
 
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        user.add(userdao.CheckUserId(userid.getText().toString()));
+                    }
+                });
+
                 if(userid.getText().toString().replaceAll(" ", "").equals(""))
                     alert.setMessage("ID를 입력해주세요 !");
-                else if (!userdao.CheckUserId(userid.getText().toString()).equals(null))
+                else if (user.size() == 1)
                     alert.setMessage("중복된 ID 입니다.");
                 else {
                     alert.setMessage("사용 가능한 ID 입니다.");
+                    userid.setEnabled(false);
                     checkidbtn.setEnabled(false);
                 }
                 alert.show();
@@ -132,8 +146,15 @@ public class ApplyActivity extends AppCompatActivity {
                 }
 
 
-                userdao.Insert(new User(userid.getText().toString(), userpw.getText().toString(),
-                        username.getText().toString(), usermail.getText().toString().concat("@").concat(maillist.getSelectedItem().toString())));
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        userdao.InsertUser(new User(userid.getText().toString(), userpw.getText().toString(),
+                                username.getText().toString(), usermail.getText().toString()));
+                    }
+                });
+
+                thread.start();
 
                 alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override

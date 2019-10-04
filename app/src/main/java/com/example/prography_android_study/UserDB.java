@@ -4,7 +4,7 @@ import android.content.*;
 
 import androidx.room.*;
 
-@Database(entities = {User.class}, version = 1)
+@Database(entities = {User.class}, version = 1, exportSchema = false)
 public abstract class UserDB extends RoomDatabase {
     public abstract UserDAO userDao();
 

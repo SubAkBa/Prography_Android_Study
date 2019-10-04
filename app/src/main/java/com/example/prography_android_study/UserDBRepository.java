@@ -12,7 +12,7 @@ public class UserDBRepository {
         userdao = db.userDao();
     }
 
-    public void Insert(User user){
+    public void InsertUser(User user){
         new insertAsyncTask(userdao).execute(user);
     }
 
@@ -26,7 +26,7 @@ public class UserDBRepository {
 
         @Override
         protected Void doInBackground(final User... params) {
-            mAsyncTaskDao.Insert(params[0]);
+            mAsyncTaskDao.InsertUser(params[0]);
             return null;
         }
     }
