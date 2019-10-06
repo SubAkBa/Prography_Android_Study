@@ -17,7 +17,11 @@ public class MainActivity extends AppCompatActivity {
     UserDB db;
     UserDAO dao;
 
-    ArrayList<User> loginuser;
+    int count;
+
+    SharedPreferences sf;
+
+    String savedID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         db = UserDB.getDatabase(getApplicationContext());
         dao = db.userDao();
-        loginuser = new ArrayList<>();
 
         final Intent intent = new Intent(this, ApplyActivity.class);
         final Intent loginintent = new Intent(this, ToDoMainActivity.class);
@@ -37,17 +40,13 @@ public class MainActivity extends AppCompatActivity {
         loginbtn = (Button) findViewById(R.id.login);
         applybtn = (Button) findViewById(R.id.apply);
 
+        sf = getSharedPreferences("LoginInfo", MODE_PRIVATE);
+        savedID = sf.getString("ID", "");
+        idtext.setText(savedID);
+
         loginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loginuser.add(dao.CheckLogin(idtext.getText().toString(), pwtext.getText().toString()));
-                    }
-                });
-
-                thread.start();
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 
@@ -58,16 +57,30 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                if (loginuser.size() == 0) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        count = dao.CheckLogin(idtext.getText().toString(), pwtext.getText().toString());
+                    }
+                });
+
+                thread.start();
+
+                if (count == 0) {
                     alert.setMessage("가입되어 있지 않거나 ID 또는 PW가 틀렸습니다.");
                     alert.show();
-                    return;
+                } else {
+                    alert.setMessage("로그인 되었습니다.");
+
+                    alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(loginintent);
+                        }
+                    });
+
+                    alert.show();
                 }
-
-                alert.setMessage("로그인 되었습니다.");
-                alert.show();
-
-                startActivity(loginintent);
             }
         });
 
@@ -77,5 +90,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        SharedPreferences sp = getSharedPreferences("LoginInfo", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+        String text = idtext.getText().toString();
+        editor.putString("ID", text);
+
+        editor.commit();
     }
 }

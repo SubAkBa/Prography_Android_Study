@@ -39,7 +39,15 @@
                 android:layout_width="620px"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
                 android:hint="PW" />
+
+            <CheckBox
+                android:id="@+id/autologin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="자동로그인" />
 
         </LinearLayout>
 

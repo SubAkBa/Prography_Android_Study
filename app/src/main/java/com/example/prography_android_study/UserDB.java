@@ -6,16 +6,17 @@ import androidx.room.*;
 
 @Database(entities = {User.class}, version = 1, exportSchema = false)
 public abstract class UserDB extends RoomDatabase {
+
     public abstract UserDAO userDao();
 
-    private static volatile UserDB INSTANCE;
+    private static volatile UserDB INSTANCE = null;
 
     public static UserDB getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (UserDB.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            UserDB.class, "word_database").build();
+                            UserDB.class, "UserDB").fallbackToDestructiveMigration().build();
                 }
             }
         }

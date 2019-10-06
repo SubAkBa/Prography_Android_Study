@@ -1,15 +1,18 @@
 package com.example.prography_android_study;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 
-import java.io.Console;
-import java.util.*;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 
 public class ApplyActivity extends AppCompatActivity {
     Button checkidbtn, completebtn, cancelbtn;
@@ -22,27 +25,27 @@ public class ApplyActivity extends AppCompatActivity {
 
     ArrayList<User> user;
 
+    int count;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apply);
 
-        user = new ArrayList<>();
-
         db = UserDB.getDatabase(getApplicationContext());
         userdao = db.userDao();
 
-        checkidbtn = (Button)findViewById(R.id.checkidbtn);
-        completebtn = (Button)findViewById(R.id.completebtn);
-        cancelbtn = (Button)findViewById(R.id.cancelbtn);
+        checkidbtn = (Button) findViewById(R.id.checkidbtn);
+        completebtn = (Button) findViewById(R.id.completebtn);
+        cancelbtn = (Button) findViewById(R.id.cancelbtn);
 
-        userid = (EditText)findViewById(R.id.userid);
-        userpw = (EditText)findViewById(R.id.userpw);
-        userpw2 = (EditText)findViewById(R.id.userpw2);
-        username = (EditText)findViewById(R.id.username);
-        usermail = (EditText)findViewById(R.id.usermail);
+        userid = (EditText) findViewById(R.id.userid);
+        userpw = (EditText) findViewById(R.id.userpw);
+        userpw2 = (EditText) findViewById(R.id.userpw2);
+        username = (EditText) findViewById(R.id.username);
+        usermail = (EditText) findViewById(R.id.usermail);
 
-        maillist = (Spinner)findViewById(R.id.maillist);
+        maillist = (Spinner) findViewById(R.id.maillist);
 
         strlist = getResources().getStringArray(R.array.maillist);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.maillistlayout, strlist);
@@ -86,19 +89,23 @@ public class ApplyActivity extends AppCompatActivity {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        user.add(userdao.CheckUserId(userid.getText().toString()));
+                        count = userdao.CheckUserId(userid.getText().toString());
                     }
                 });
 
-                if(userid.getText().toString().replaceAll(" ", "").equals(""))
+                thread.start();
+
+                if (userid.getText().toString().replaceAll(" ", "").equals(""))
                     alert.setMessage("ID를 입력해주세요 !");
-                else if (user.size() == 1)
+                else if (count == 1)
                     alert.setMessage("중복된 ID 입니다.");
                 else {
                     alert.setMessage("사용 가능한 ID 입니다.");
+
                     userid.setEnabled(false);
                     checkidbtn.setEnabled(false);
                 }
+
                 alert.show();
             }
         });
@@ -114,31 +121,31 @@ public class ApplyActivity extends AppCompatActivity {
                     }
                 });
 
-                if(userpw.getText().toString().replaceAll(" ", "").equals("") ||
+                if (userpw.getText().toString().replaceAll(" ", "").equals("") ||
                         userpw2.getText().toString().replaceAll(" ", "").equals("") ||
                         username.getText().toString().replaceAll(" ", "").equals("") ||
-                        usermail.getText().toString().replaceAll(" ", "").equals("")){
+                        usermail.getText().toString().replaceAll(" ", "").equals("")) {
                     alert.setMessage("빈칸을 채워주세요 !");
                     alert.show();
 
                     return;
                 }
 
-                if (checkidbtn.isEnabled()){
+                if (checkidbtn.isEnabled()) {
                     alert.setMessage("ID 중복확인을 해주세요 !");
                     alert.show();
 
                     return;
                 }
 
-                if (!userpw.getText().toString().equals(userpw2.getText().toString())){
+                if (!userpw.getText().toString().equals(userpw2.getText().toString())) {
                     alert.setMessage("PW를 다시 한 번 확인해주세요 ! ");
                     alert.show();
 
                     return;
                 }
 
-                if(userpw.getText().toString().length() < 8){
+                if (userpw.getText().toString().length() < 8) {
                     alert.setMessage("PW는 8글자 이상이여야 해요 !");
                     alert.show();
 
@@ -162,15 +169,16 @@ public class ApplyActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+
                 alert.setMessage("회원가입이 완료되었습니다.");
                 alert.show();
 
             }
         });
 
-        cancelbtn.setOnClickListener(new View.OnClickListener(){
+        cancelbtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 AlertDialog.Builder alertbuilders = new AlertDialog.Builder(ApplyActivity.this);
 
                 alertbuilders.setMessage("회원가입을 종료할까요 ?").setCancelable(false);
