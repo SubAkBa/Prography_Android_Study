@@ -3,12 +3,11 @@ package com.example.prography_android_study;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.*;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     EditText idtext, pwtext;
@@ -19,9 +18,11 @@ public class MainActivity extends AppCompatActivity {
 
     int count;
 
+    CheckBox autologin;
+
     SharedPreferences sf;
 
-    String savedID;
+    String loginID, loginPW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
         db = UserDB.getDatabase(getApplicationContext());
         dao = db.userDao();
 
-        final Intent intent = new Intent(this, ApplyActivity.class);
-        final Intent loginintent = new Intent(this, ToDoMainActivity.class);
+        autologin = (CheckBox) findViewById(R.id.autologin);
 
         idtext = (EditText) findViewById(R.id.idspace);
         pwtext = (EditText) findViewById(R.id.pwspace);
@@ -40,13 +40,36 @@ public class MainActivity extends AppCompatActivity {
         loginbtn = (Button) findViewById(R.id.login);
         applybtn = (Button) findViewById(R.id.apply);
 
-        sf = getSharedPreferences("LoginInfo", MODE_PRIVATE);
-        savedID = sf.getString("ID", "");
-        idtext.setText(savedID);
+        sf = getSharedPreferences("auto", MODE_PRIVATE);
+
+        loginID = sf.getString("autoID", "");
+        loginPW = sf.getString("autoPW", "");
+
+        idtext.setText(loginID);
+
+        if (loginID != null && loginPW != null) {
+            if (loginID.equals("1234") && loginPW.equals("12341234")) {
+                Toast.makeText(MainActivity.this, loginID + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+                Intent loginit = new Intent(MainActivity.this, ToDoMainActivity.class);
+                startActivity(loginit);
+                finish();
+            }
+        }
 
         loginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if (autologin.isChecked()) {
+                    SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+
+                    SharedPreferences.Editor autoLogin = auto.edit();
+
+                    autoLogin.putString("autoID", idtext.getText().toString());
+                    autoLogin.putString("autoPW", pwtext.getText().toString());
+
+                    autoLogin.commit();
+                }
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 
@@ -75,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            Intent loginintent = new Intent(MainActivity.this, ToDoMainActivity.class);
                             startActivity(loginintent);
                         }
                     });
@@ -84,9 +108,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         applybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ApplyActivity.class);
                 startActivity(intent);
             }
         });
@@ -96,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        SharedPreferences sp = getSharedPreferences("LoginInfo", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("auto", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
         String text = idtext.getText().toString();
-        editor.putString("ID", text);
+        editor.putString("autoID", text);
 
         editor.commit();
     }

@@ -2,11 +2,13 @@ package com.example.prography_android_study;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class ToDoMainActivity extends AppCompatActivity {
 
@@ -22,9 +24,15 @@ public class ToDoMainActivity extends AppCompatActivity {
         logoutbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                SharedPreferences.Editor spclear = getSharedPreferences(Context).edit();
-//                spclear.clear();
-//                spclear.commit();
+                SharedPreferences spclear = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor edit = spclear.edit();
+
+                edit.clear();
+                edit.commit();
+
+                Toast.makeText(ToDoMainActivity.this, "로그아웃 합니다.", Toast.LENGTH_LONG).show();
+
+                finish();
             }
         });
     }
