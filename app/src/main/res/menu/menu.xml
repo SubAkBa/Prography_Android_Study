@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/writebtn"
+        android:title="1"
+        android:icon="@android:drawable/ic_menu_edit"
+        app:showAsAction="always">
+    </item>
+
+    <item
+        android:id="@+id/searchbtn"
+        android:title="1"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always">
+    </item>
+
+    <item
+        android:id="@+id/etcbtn"
+        android:title="Logout"
+        app:showAsAction="never">
+    </item>
+
+</menu>

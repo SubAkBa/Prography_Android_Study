@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     EditText idtext, pwtext;
     Button loginbtn, applybtn;
@@ -16,9 +19,12 @@ public class MainActivity extends AppCompatActivity {
     UserDB db;
     UserDAO dao;
 
-    int count;
+    int count = 0;
+    boolean isexisted = false;
 
     CheckBox autologin;
+
+    List<User> userlist;
 
     SharedPreferences sf;
 
@@ -28,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        userlist = new ArrayList<>();
 
         db = UserDB.getDatabase(getApplicationContext());
         dao = db.userDao();
@@ -47,13 +55,13 @@ public class MainActivity extends AppCompatActivity {
 
         idtext.setText(loginID);
 
-        if (loginID != null && loginPW != null) {
-            if (loginID.equals("1234") && loginPW.equals("12341234")) {
-                Toast.makeText(MainActivity.this, loginID + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
-                Intent loginit = new Intent(MainActivity.this, ToDoMainActivity.class);
-                startActivity(loginit);
-                finish();
-            }
+        if (!loginID.equals("") && !loginPW .equals("")) {
+            Toast.makeText(MainActivity.this, loginID + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+
+            Intent loginit = new Intent(MainActivity.this, ToDoMainActivity.class);
+            startActivity(loginit);
+
+            finish();
         }
 
         loginbtn.setOnClickListener(new View.OnClickListener() {
@@ -83,28 +91,46 @@ public class MainActivity extends AppCompatActivity {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        count = dao.CheckLogin(idtext.getText().toString(), pwtext.getText().toString());
+                        userlist = dao.CheckLogin(idtext.getText().toString(), pwtext.getText().toString());
                     }
                 });
 
                 thread.start();
 
-                if (count == 0) {
+                try {
+                    thread.join();
+                } catch (Exception e) {
+                    e.getStackTrace();
+                }
+
+                for (int i = 0; i < userlist.size(); i++) {
+                    User temp = userlist.get(i);
+
+                    if (temp.userid.equals(temp.userid) && temp.userpw.equals(temp.userpw))
+                        isexisted = true;
+                }
+
+                if (!isexisted) {
                     alert.setMessage("가입되어 있지 않거나 ID 또는 PW가 틀렸습니다.");
                     alert.show();
-                } else {
-                    alert.setMessage("로그인 되었습니다.");
 
-                    alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent loginintent = new Intent(MainActivity.this, ToDoMainActivity.class);
-                            startActivity(loginintent);
-                        }
-                    });
-
-                    alert.show();
+                    return;
                 }
+
+                alert.setMessage("로그인 되었습니다.");
+
+                alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Intent loginintent = new Intent(MainActivity.this, ToDoMainActivity.class);
+                        startActivity(loginintent);
+
+                        finish();
+                    }
+                });
+
+                alert.show();
             }
         });
 

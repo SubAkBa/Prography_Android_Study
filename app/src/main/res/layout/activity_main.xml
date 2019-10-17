@@ -37,6 +37,7 @@
             <EditText
                 android:id="@+id/pwspace"
                 android:layout_width="620px"
+                android:inputType="textPassword"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="20dp"

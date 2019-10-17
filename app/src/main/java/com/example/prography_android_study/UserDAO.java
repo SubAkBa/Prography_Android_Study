@@ -1,6 +1,7 @@
 package com.example.prography_android_study;
 
 import androidx.room.*;
+import java.util.*;
 
 
 @Dao
@@ -15,7 +16,7 @@ public interface UserDAO {
     @Query("DELETE FROM User WHERE userid = :inputuserid")
     public void DeleteUserInfo(String inputuserid);
 
-    @Query("SELECT COUNT(*) FROM User WHERE userid = :inputuserid AND userpw = :inputuserpw")
-    public int CheckLogin(String inputuserid, String inputuserpw);
+    @Query("SELECT * FROM User WHERE userid = :inputuserid AND userpw = :inputuserpw")
+    public List<User> CheckLogin(String inputuserid, String inputuserpw);
 
 }

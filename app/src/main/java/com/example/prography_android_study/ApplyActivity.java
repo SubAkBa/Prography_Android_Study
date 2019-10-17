@@ -95,6 +95,12 @@ public class ApplyActivity extends AppCompatActivity {
 
                 thread.start();
 
+                try {
+                    thread.join();
+                } catch(Exception e){
+                    e.getStackTrace();
+                }
+
                 if (userid.getText().toString().replaceAll(" ", "").equals(""))
                     alert.setMessage("ID를 입력해주세요 !");
                 else if (count == 1)
