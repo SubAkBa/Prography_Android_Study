@@ -1,6 +1,8 @@
 package com.example.prography_android_study;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 
 import android.app.*;
 import android.content.Intent;
@@ -14,6 +16,7 @@ import java.util.Date;
 public class MemoActivity extends AppCompatActivity {
     long now;
     String[] getDate, date, time;
+    String position;
 
     SimpleDateFormat sdf;
 
@@ -41,6 +44,7 @@ public class MemoActivity extends AppCompatActivity {
 
         getDate = sdf.format(new Date(now)).split(" ");
 
+        position = "-1";
         date = getDate[0].split("-");
         time = getDate[1].split(":");
 
@@ -94,10 +98,25 @@ public class MemoActivity extends AppCompatActivity {
                 result.putExtra("content", content.getText().toString());
                 result.putExtra("date", datebtn.getText().toString());
                 result.putExtra("time", timebtn.getText().toString());
+                if(!position.equals("-1"))
+                    result.putExtra("pos", position);
                 setResult(RESULT_OK, result);
                 finish();
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if(resultCode == RESULT_OK) {
+            if (requestCode == 3001) {
+                title.setText(data.getStringExtra("title"));
+                content.setText(data.getStringExtra("content"));
+                datebtn.setText(data.getStringExtra("date"));
+                timebtn.setText(data.getStringExtra("time"));
+                position = data.getStringExtra("pos");
+            }
+        }
+    }
 }

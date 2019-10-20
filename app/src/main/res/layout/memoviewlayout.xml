@@ -15,24 +15,24 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/viewtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Title"
-            android:textSize="30dp" />
+            android:textSize="15dp" />
 
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/viewdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15dp"
+            android:textSize="5dp"
             android:text="Date" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/img"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         app:srcCompat="@mipmap/ic_launcher" />
 
 </LinearLayout>
