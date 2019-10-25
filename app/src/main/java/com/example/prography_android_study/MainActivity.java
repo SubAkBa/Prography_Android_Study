@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, loginID + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
 
             Intent loginit = new Intent(MainActivity.this, ToDoMainActivity.class);
+            loginit.putExtra("userid", loginID);
             startActivity(loginit);
-
             finish();
         }
 
@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
 
                         Intent loginintent = new Intent(MainActivity.this, ToDoMainActivity.class);
+                        loginintent.putExtra("userid", loginID);
                         startActivity(loginintent);
 
                         finish();

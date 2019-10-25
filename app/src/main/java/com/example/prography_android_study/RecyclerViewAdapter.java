@@ -76,4 +76,5 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public int getItemCount() {
         return (null != this.itemlist ? this.itemlist.size() : 0);
     }
+
 }

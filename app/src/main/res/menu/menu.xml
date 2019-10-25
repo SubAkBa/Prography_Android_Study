@@ -16,8 +16,14 @@
     </item>
 
     <item
-        android:id="@+id/etcbtn"
+        android:id="@+id/logoutbtn"
         android:title="Logout"
+        app:showAsAction="never">
+    </item>
+
+    <item
+        android:id="@+id/deleteallbtn"
+        android:title="DeleteAllMemo"
         app:showAsAction="never">
     </item>
 
