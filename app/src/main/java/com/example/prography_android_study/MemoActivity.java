@@ -5,11 +5,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import android.app.*;
+import android.app.ActionBar;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +27,9 @@ import android.widget.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class MemoActivity extends AppCompatActivity {
     long now;
@@ -38,6 +50,26 @@ public class MemoActivity extends AppCompatActivity {
 
     ArrayList<Memo> memo;
 
+    private void scheduleNotification(Notification notification, long delay) {
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = delay;
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    private Notification getNotification(String content) {
+        Notification.Builder builder = new Notification.Builder(this);
+
+        builder.setContentTitle("Scheduled Notification");
+        builder.setContentText(content);
+
+        return builder.build();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.memo_menu, menu);
@@ -49,7 +81,7 @@ public class MemoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if(id == R.id.etcbtn){
+        if (id == R.id.etcbtn) {
             AlertDialog.Builder alertbuilder = new AlertDialog.Builder(MemoActivity.this);
 
             alertbuilder.setPositiveButton("확인",
@@ -65,9 +97,9 @@ public class MemoActivity extends AppCompatActivity {
 
                             thread.start();
 
-                            try{
+                            try {
                                 thread.join();
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 e.getStackTrace();
                             }
 
@@ -107,17 +139,17 @@ public class MemoActivity extends AppCompatActivity {
         db = MemoDB.getDatabase(getApplicationContext());
         memodao = db.memoDao();
 
-        datebtn = (Button)findViewById(R.id.datebtn);
-        timebtn = (Button)findViewById(R.id.timebtn);
-        addbtn = (Button)findViewById(R.id.addbtn);
+        datebtn = (Button) findViewById(R.id.datebtn);
+        timebtn = (Button) findViewById(R.id.timebtn);
+        addbtn = (Button) findViewById(R.id.addbtn);
 
-        title = (EditText)findViewById(R.id.title);
-        content = (EditText)findViewById(R.id.content);
+        title = (EditText) findViewById(R.id.title);
+        content = (EditText) findViewById(R.id.content);
 
         Intent info = getIntent();
         userid = info.getStringExtra("userid");
 
-        if(!info.getStringExtra("title").equals("")){
+        if (!info.getStringExtra("title").equals("")) {
             title.setText(info.getStringExtra("title"));
             content.setText(info.getStringExtra("content"));
             datebtn.setText(info.getStringExtra("date").replaceAll("/", "     /     "));
@@ -128,7 +160,7 @@ public class MemoActivity extends AppCompatActivity {
             time = info.getStringExtra("time").replaceAll(" ", "").split(":");
             addbtn.setText("메모 변경");
 
-        } else{
+        } else {
             now = System.currentTimeMillis();
 
             sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -184,7 +216,7 @@ public class MemoActivity extends AppCompatActivity {
 
                 Intent result = new Intent();
 
-                if(addbtn.getText().toString().equals("메모 추가")) {
+                if (addbtn.getText().toString().equals("메모 추가")) {
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -203,12 +235,12 @@ public class MemoActivity extends AppCompatActivity {
 
                     try {
                         thread.join();
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         e.getStackTrace();
                     }
 
                     text = "추가";
-                } else{
+                } else {
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -226,7 +258,7 @@ public class MemoActivity extends AppCompatActivity {
 
                     try {
                         thread.join();
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         e.getStackTrace();
                     }
 
@@ -248,8 +280,20 @@ public class MemoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "메모 " + text + " 이(가) 완료되었어요.", Toast.LENGTH_LONG).show();
 
                 setResult(RESULT_OK, result);
+
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, Integer.parseInt(date[0]));
+                cal.set(Calendar.MONTH, Integer.parseInt(date[1]));
+                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[2]));
+                cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+                cal.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+                cal.set(Calendar.SECOND, 0);
+
+                scheduleNotification(getNotification(title.getText().toString()), cal.getTimeInMillis());
+
                 finish();
             }
         });
     }
+
 }

@@ -1,16 +1,9 @@
 package com.example.prography_android_study;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.view.*;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,8 +14,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class ToDoMainActivity extends AppCompatActivity {
 
@@ -55,7 +48,7 @@ public class ToDoMainActivity extends AppCompatActivity {
         for (int i = 0; i < memolist.size(); i++) {
             itemlist.add(new RecyclerViewItem(
                     memolist.get(i).title, memolist.get(i).content,
-                    memolist.get(i).date, memolist.get(i).time));
+                    memolist.get(i).date.replaceAll(" ", ""), memolist.get(i).time));
         }
 
     }
@@ -113,6 +106,7 @@ public class ToDoMainActivity extends AppCompatActivity {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(rview);
+
     }
 
     @Override

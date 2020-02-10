@@ -2,6 +2,7 @@ package com.example.prography_android_study;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -50,6 +51,21 @@ public class ApplyActivity extends AppCompatActivity {
         strlist = getResources().getStringArray(R.array.maillist);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.maillistlayout, strlist);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+        RetrofitConnect retrofitConnection = new RetrofitConnect();
+        Call<Get_My_Data> call =  retrofitConnection.server.get_data();
+        call.enqueue(new Callback<Get_My_Data>() {
+            @Override
+            public void onResponse(Call<Get_My_Data> call, Response<Get_My_Data> response) {
+                if (response.isSuccessful()) {
+                    // 성공적으로 서버에서 데이터 불러옴.
+                }else {
+                    // 서버와 연결은 되었으나, 오류 발생
+                }
+            }
+        };
+
+
 
         maillist.setAdapter(adapter);
         maillist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -207,5 +223,10 @@ public class ApplyActivity extends AppCompatActivity {
                 alert.show();
             }
         });
+    }
+
+    @Override
+    public void onFailure(Call<Get_My_Data> call, Throwable t) {
+        Log.d(TAG, "onFailure: " + t.toString()); //서버와 연결 실패
     }
 }
